@@ -8,6 +8,10 @@ Region::~Region(){
     }
 }
 
+Region::Region(const std::string& regionName) {
+    name = regionName;  // Initialize the inherited name from Place
+}
+
 void Region::add(Place* place){
     childrens.push_back(place);
 }

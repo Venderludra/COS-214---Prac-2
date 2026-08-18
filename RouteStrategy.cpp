@@ -2,14 +2,13 @@
 using namespace std;
 
 //context implementation
-Trip::Trip(const std::string& start, const std::string& end) : strategy(std::make_unique<ShortestPath>()), //default strategy
+Trip::Trip(const std::string& start, const std::string& end) : strategy(new ShortestPath()), //default strategy
       origin(start), 
       destination(end) {}
 
 // Destructor implementation
 Trip::~Trip() {
-    // The std::unique_ptr strategy member automatically deletes the strategy object.
-    // No manual delete is required here to avoid memory leaks.
+    delete strategy;
 }
 
 void Trip::planRoute() const {
@@ -19,9 +18,9 @@ void Trip::planRoute() const {
     }
 }
 
-void Trip::setStrategy(std::unique_ptr<RouteStrategy> newStrategy) {
-    //leak-free swap (old strategy is auto-deleted by unique_ptr)
-    strategy = move(newStrategy);
+void Trip::setStrategy(RouteStrategy* newStrategy) {
+    delete strategy;
+    strategy = newStrategy;
     cout << "Route strategy changed to: " << strategy->getName() << endl;
 }
 

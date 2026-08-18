@@ -11,6 +11,7 @@ class Region : public Place{
         void add(Place*);
         void remove(Place*);
         void display() override;
+        Region(const std::string& regionName);  //to add or not to add?
 };
 
 #endif

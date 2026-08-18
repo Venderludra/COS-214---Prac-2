@@ -3,7 +3,6 @@
 
 #include <string>
 #include <iostream>
-#include <memory>
 
     //the abstract strategy
     class RouteStrategy {
@@ -50,19 +49,15 @@
     //the context
     class Trip {
         private:
-            std::unique_ptr<RouteStrategy> strategy;//remember - the unique_ptr "manages" our memory
+            RouteStrategy* strategy;
             std::string origin;
             std::string destination;
 
         public:
             Trip(const std::string& start, const std::string& end);
             ~Trip(); //the destructor
-
-            //behaviour
             void planRoute() const;
-
-            //the runtime strategy switching
-            void setStrategy(std::unique_ptr<RouteStrategy> newStrategy);
+            void setStrategy(RouteStrategy* newStrategy);
             std::string getCurrentStrategyName() const;
     };
 

@@ -3,7 +3,6 @@
 
 #include <string>
 #include <iostream>
-#include <memory>
 
 class Traveller;
 
@@ -70,8 +69,7 @@ class Transport : public TravelMode {
 //the context
 class Traveller {
     private:
-        std::unique_ptr<TravelMode> currentMode;
-        
+        TravelMode* currentMode;        
         std::string name;
         //state variables for transition guards
         bool hasBicycle;

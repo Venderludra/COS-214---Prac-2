@@ -30,7 +30,7 @@
 
     //context
     Traveller::Traveller(const std::string& travellerName)
-        : currentMode(std::make_unique<Walking>()), //we first start on foot
+        : currentMode(new Walking()), //we first start on foot
         name(travellerName),
         hasBicycle(false), hasBoat(false), hasCarKeys(false), 
         hasPlaneTicket(false), hasTransportPass(false) {}
@@ -41,33 +41,31 @@
         }
     }
 
-    void Traveller::switchMode(const std::string& targetMode) {
-        if (!currentMode) return;
+  void Traveller::switchMode(const std::string& targetMode) {
+    if (!currentMode) return;
 
-        //our guard check point.we ask the currentState if we are allowed to leave it
-        if (!currentMode->canTransition(this)) {
-            std::cout << "GUARD FAILED: Cannot leave current mode ("<< currentMode->getName() << ")!" << std::endl;
-            return;
-        }
-
-        //create the new mode
-        std::unique_ptr<TravelMode> newMode;
-        if (targetMode == "Walking") newMode = std::make_unique<Walking>();
-        else if (targetMode == "Bicycle") newMode = std::make_unique<Bicycle>();
-        else if (targetMode == "Car") newMode = std::make_unique<Car>();
-        else if (targetMode == "Boat") newMode = std::make_unique<Boat>();
-        else if (targetMode == "Flying") newMode = std::make_unique<Flying>();
-        else if (targetMode == "Transport") newMode = std::make_unique<Transport>();
-        else {
-            std::cout << "Unknown mode: " << targetMode << std::endl;
-            return;
-        }
-
-        //leak-free swap (the old mode is auto-deleted by unique_ptr)
-        currentMode = std::move(newMode);
-        std::cout << "Switched to: " << currentMode->getName() << std::endl;
+    if (!currentMode->canTransition(this)) {
+        std::cout << "GUARD FAILED: Cannot leave current mode ("<< currentMode->getName() << ")!" << std::endl;
+        return;
     }
 
+    TravelMode* newMode = nullptr;
+    if (targetMode == "Walking") newMode = new Walking();
+    else if (targetMode == "Bicycle") newMode = new Bicycle();
+    else if (targetMode == "Car") newMode = new Car();
+    else if (targetMode == "Boat") newMode = new Boat();
+    else if (targetMode == "Flying") newMode = new Flying();
+    else if (targetMode == "Transport") newMode = new Transport();
+    else {
+        std::cout << "Unknown mode: " << targetMode << std::endl;
+        return;
+    }
+
+    // Delete the old mode manually before switching
+    delete currentMode;
+    currentMode = newMode;
+    std::cout << "Switched to: " << currentMode->getName() << std::endl;
+}
     void Traveller::listAvailableModes() const {
         std::cout << "\n--- Available Modes to attempt to switch to ---" << std::endl;
         std::string modes[] = {"Walking", "Bicycle", "Car", "Boat", "Flying", "Transport"};
